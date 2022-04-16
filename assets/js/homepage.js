@@ -3,6 +3,24 @@ var nameInputEl = document.querySelector("#username");
 var repoContainerEl = document.querySelector("#repos-container");
 var repoSearchTerm = document.querySelector("#repo-search-term");
 
+var formSubmitHandler = function (event) {
+  // prevent page from refreshing
+  event.preventDefault();
+
+  // get value from input element
+  var username = nameInputEl.value.trim();
+
+  if (username) {
+    getUserRepos(username);
+
+    // clear old content
+    repoContainerEl.textContent = "";
+    nameInputEl.value = "";
+  } else {
+    alert("Please enter a GitHub username");
+  }
+};
+
 var getUserRepos = function (user) {
   //format the github api url
   var apiUrl = "https://api.github.com/users/" + user + "/repos";
@@ -18,28 +36,13 @@ var getUserRepos = function (user) {
           displayRepos(data, user);
         });
       } else {
-        window.alert("Error: GitHub User Not Found");
+        window.alert("Error: " + response.statusText);
       }
     })
     .catch(function (error) {
       //catching network errors
       window.alert("Unable to connect to Github");
     });
-};
-
-var formSubmitHandler = function (event) {
-  event.preventDefault();
-  console.log(event);
-
-  //get value from input element
-  var userName = nameInputEl.value.trim();
-  if (userName) {
-    getUserRepos(userName);
-    //clear the input value
-    userName = "";
-  } else {
-    alert("Please enter a GitHub username");
-  }
 };
 
 //function to display repos
@@ -50,10 +53,7 @@ var displayRepos = function (repos, searchTerm) {
     repoContainerEl.textContent = "No repositories found";
     return;
   }
-  console.log(repos);
-  //console.log(searchTerm);
-  //clear old content
-  repoContainerEl.textContent = "";
+
   repoSearchTerm.textContent = searchTerm;
 
   //loop over repos
@@ -72,9 +72,6 @@ var displayRepos = function (repos, searchTerm) {
     //append to container
     repoEl.appendChild(titleEl);
 
-    //append container to dom
-    repoContainerEl.appendChild(repoEl);
-
     //create a status element ti display github issues
     var statusEl = document.createElement("span");
     statusEl.className = "flex-row align-center";
@@ -86,12 +83,17 @@ var displayRepos = function (repos, searchTerm) {
         repos[i].open_issues_count +
         " issue(s)";
     } else {
-      ("<i class='fas fa-check-square status-icon icon-success'></i>");
+      statusEl.innerHtml =
+        "<i class='fas fa-check-square status-icon icon-success'></i>";
     }
 
     //append to container
     repoEl.appendChild(statusEl);
+
+    //append container to dom
+    repoContainerEl.appendChild(repoEl);
   }
 };
 
+// add event listeners to forms
 userFormEl.addEventListener("submit", formSubmitHandler);
