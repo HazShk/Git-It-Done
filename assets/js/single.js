@@ -72,7 +72,7 @@ var displayWarning = function (repo) {
 
   var linkEl = document.createElement("a");
   linkEl.textContent = "see more issues on GitHub.com";
-  linkEl.setAttribute("href, https://github.com/" + repo + "/issues");
+  linkEl.setAttribute("href", "https://github.com/" + repo + "/issues");
   linkEl.setAttribute("target", "_blank");
 
   //append to warning container
