@@ -1,5 +1,21 @@
 var issueContainerEl = document.querySelector("#issues-container");
 var limitWarningEl = document.querySelector("#limit-warning");
+var repoNameEl = document.querySelector("#repo-name");
+
+var getRepoName = function () {
+  var queryString = document.location.search;
+  //formating the query paramter url to just get the repo name
+  var repoName = queryString.split("=")[1];
+  if (repoName) {
+    //passing the reponame to getrepoissues()
+    getRepoIssues(repoName);
+    //display repo name on the page
+    repoNameEl.textContent = repoName;
+  } else {
+    //redirecting the user to the homepage incase repoName is false
+    document.location("./index.html");
+  }
+};
 
 var getRepoIssues = function (repo) {
   //format the github api url
@@ -19,7 +35,8 @@ var getRepoIssues = function (repo) {
         }
       });
     } else {
-      window.alert("There was a problem with your request");
+      // if not successful, redirect to homepage
+      document.location.replace("./index.html");
     }
   });
 };
@@ -79,4 +96,4 @@ var displayWarning = function (repo) {
   limitWarningEl.appendChild(linkEl);
 };
 
-getRepoIssues("angular/angular");
+getRepoName();
